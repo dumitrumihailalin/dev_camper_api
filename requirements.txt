@@ -1,0 +1,3 @@
+npm i bcryptjs
+npm i jsonwebtoken
+npm i cookie-parser

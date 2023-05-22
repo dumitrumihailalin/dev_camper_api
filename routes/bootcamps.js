@@ -7,6 +7,9 @@ const {
     deleteBootcamp
 } = require('../controllers/bootcamps');
 const router = express.Router();
-router.route('/').get(getBootcamps).post(createBootcamp);
-router.route('/:id').get(getBootcamp).put(updateBootcamp).delete(deleteBootcamp);
+
+const { protect, authorize } = require('../middleware/auth');
+
+router.route('/').get(protect, authorize('publisher', 'admin'), getBootcamps).post(protect, createBootcamp);
+router.route('/:id').get(getBootcamp).put(protect, authorize('publisher', 'admin'), updateBootcamp).delete(deleteBootcamp);
 module.exports = router;
