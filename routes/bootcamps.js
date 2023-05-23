@@ -6,7 +6,10 @@ const {
     updateBootcamp, 
     deleteBootcamp
 } = require('../controllers/bootcamps');
+const courseRouter = require('./courses');
+
 const router = express.Router();
+router.use('/:bootcampId/courses', courseRouter);
 
 const { protect, authorize } = require('../middleware/auth');
 
