@@ -81,20 +81,10 @@ exports.getCourse = async (req, res, next) => {
         success: true,
         data: course
     });
-    // try {
-
-    //     if ( ! course) {
-    //         return next(new errorResponse(`Course not found with id of ${req.params.id}`), 404);
-    //     }
-    //     res.status(200).json({success: true, data: course});
-    // } catch (err) {
-    //     next(new errorResponse(`Course not found with id of ${req.params.id}`), 404);
-    // }
 }
 
 exports.createCourse = asyncHandler(async (req, res, next) => {
     req.body.bootcamp = req.params.bootcampId
-
     const bootcamp = await Bootcamp.findById(req.params.bootcampId);
     if ( ! bootcamp) {
         return next(

@@ -6,7 +6,7 @@ exports.getBootcamps = asyncHandler(async (req, res, next) => {
     let query;
     const reqQuery = { ...req.query};
 
-    let removeFields = ['select', 'sort'];
+    let removeFields = ['select', 'sort', 'page', 'limit'];
     removeFields.forEach(param => delete reqQuery[param]);
 
     let queryStr = JSON.stringify(reqQuery);
