@@ -5,9 +5,11 @@ const connectDB = require('./config/db');
 const morgan = require('morgan');
 const errorHandler = require('./middleware/error');
 const cookieParser = require('cookie-parser');
+const fileUpload = require('express-fileupload');
 // Route files
 const bootcamps = require('./routes/bootcamps');
 const courses = require('./routes/courses');
+const reviews = require('./routes/reviews');
 const auth = require('./routes/auth');
 
 // Load env vars
@@ -19,16 +21,21 @@ app.use(logger);
 app.use(express.json());
 // Mount routers
 app.use('/api/v1/bootcamps', bootcamps);
+app.use('/api/v1/reviews', reviews);
 app.use('/api/v1/courses', courses);
 app.use('/api/v1/auth', auth);
 
 
 app.use(errorHandler);
 app.use(cookieParser());
+// File upload
+app.use(fileUpload());
 // Dev login middleware
 if (process.env.NODE_ENV === 'development') {
     app.use(morgan('dev'));
 }
+
+
 const PORT = process.env.PORT || 5000;
 const server = app.listen(PORT, console.log(`Server running ${process.env.NODE_ENV} ${PORT}`));
 

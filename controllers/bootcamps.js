@@ -110,3 +110,16 @@ exports.deleteBootcamp = asyncHandler(async (req, res, next) => {
     bootcamp.remove();
     res.status(200).json({success: true, data: {} });
 });
+
+exports.bootcampFileUpload = asyncHandler(async (req, res, next) => {
+    const bootcamp = await Bootcamp.findById(req.params.id)
+    if (! bootcamp) {
+        return next(new errorResponse(`Bootcamp not found with id ${req.params.id}`), 404);
+    }
+    console.log(req.file);
+    
+    if (!req.files) {
+        return next(new errorResponse(`Please upload a file`), 400);
+    }
+
+});
