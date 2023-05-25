@@ -1,6 +1,7 @@
 const Bootcamp = require("../models/Bootcamp");
 const errorResponse = require("../utils/errorResponse");
 const asyncHandler = require('../middleware/async');
+const path = require('path');
 
 exports.getBootcamps = asyncHandler(async (req, res, next) => {
     let query;
@@ -116,10 +117,23 @@ exports.bootcampFileUpload = asyncHandler(async (req, res, next) => {
     if (! bootcamp) {
         return next(new errorResponse(`Bootcamp not found with id ${req.params.id}`), 404);
     }
-    console.log(req.file);
     
     if (!req.files) {
         return next(new errorResponse(`Please upload a file`), 400);
     }
-
+    const file = req.files.file;
+    file.name = `photo_${bootcamp._id}${path.parse(file.name).ext}`;
+    file.mv(`${process.env.FILE_UPLOAD_PATH}/${file.name}`, async err => {
+        if (err) {
+            console.error(err);
+            return next(
+                new errorResponse(`Issues with file upload`, 500)
+            );
+        }
+        await Bootcamp.findByIdAndUpdate(req.params.id, { photo: file.name });
+        res.status(200).json({
+            success: true,
+            data: file.name
+        });
+    })
 });
