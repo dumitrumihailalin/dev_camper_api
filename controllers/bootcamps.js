@@ -68,6 +68,7 @@ exports.getBootcamp = async (req, res, next) => {
 exports.createBootcamp = asyncHandler(async (req, res, next) => {
     // Add user to body
     req.body.user = req.user.id;
+    
     const publishedBootcamp = await Bootcamp.findOne({user: req.user.id});
 
     if (publishedBootcamp && req.user.role !== 'admin') {

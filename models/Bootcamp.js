@@ -44,18 +44,18 @@
         //     zipcode: String,
         //     country: String
         // },
-        // careers: {
-        //     type: [String],
-        //     required: true,
-        //     enum: [
-        //         'Web Development',
-        //         'Mobile  Development',
-        //         'UI/UX',
-        //         'Data Science',
-        //         'Business',
-        //         'Other'
-        //     ]
-        // },
+        careers: {
+            type: [String],
+            enum: [
+                'Web Development',
+                'Mobile  Development',
+                'UI/UX',
+                'Data Science',
+                'Business',
+                'Other'
+            ],
+            default: 'Web Development'
+        },
         averageRating: {
             type: Number,
             min: [1, 'Rating must be at least 1'],
@@ -90,6 +90,14 @@
             type: mongoose.Schema.ObjectId,
             ref: 'User',
             required: true
+        }
+    },
+    {
+        toJSON: { 
+            virtuals: true 
+        },
+        toObject: {
+            virtuals: true 
         }
     }); 
 

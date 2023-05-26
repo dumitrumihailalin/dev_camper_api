@@ -11,6 +11,7 @@ const fileUpload = require('express-fileupload');
 const bootcamps = require('./routes/bootcamps');
 const courses = require('./routes/courses');
 const reviews = require('./routes/reviews');
+const users = require('./routes/users');
 const auth = require('./routes/auth');
 
 // Load env vars
@@ -22,20 +23,21 @@ app.use(logger);
 app.use(express.json());
 // File upload
 app.use(fileUpload());
+
 // Mount routers
 app.use('/api/v1/bootcamps', bootcamps);
 app.use('/api/v1/reviews', reviews);
 app.use('/api/v1/courses', courses);
 app.use('/api/v1/auth', auth);
+app.use('/api/v1/users', users);
 
-
-app.use(errorHandler);
-app.use(cookieParser());
 // Dev login middleware
 if (process.env.NODE_ENV === 'development') {
     app.use(morgan('dev'));
 }
+app.use(errorHandler);
 
+app.use(cookieParser());
 // Set static folder
 app.use(express.static(path.join(__dirname, 'public')));
 

@@ -1,3 +1,4 @@
+const crypto = require('crypto');
 const User = require("../models/User");
 const errorResponse = require("../utils/errorResponse");
 const asyncHandler = require('../middleware/async');
@@ -44,6 +45,7 @@ exports.getMe = asyncHandler(async (req, res, next) => {
 
     res.status(200).json({ success: true, data: user });
 });
+
 // Get token from model, create cookie and send response
 const sendTokenResponse = (user, statusCode, res) => {
     // Create token
@@ -63,3 +65,59 @@ const sendTokenResponse = (user, statusCode, res) => {
         .cookie('token', token, options)
         .json({ success: true, token});
 }
+
+exports.forgotPassword = asyncHandler(async (req, res, next) => { 
+    const user = await User.findOne({ email: req.body.email });
+    if (!user) { 
+        return next(new errorResponse(`There is not user with that email`, 404));
+    }
+
+    // Get reset token
+    const resetToken = user.getResetPasswordToken();
+    await user.save({ validateBeforeSave: false });
+    res.status(200).json({ success: true, data: user });
+});
+
+exports.resetPassword = asyncHandler(async (req, res, next) => { 
+    // Get hashed token
+    const resetPasswordToken = req.params.resettoken;
+    const user = await User.findOne({
+        resetPasswordToken,
+        resetPasswordExpire: { $gt: Date.now() }
+    });
+
+    if (!user) {
+        return next(new errorResponse('Invalid token'), 400);
+    }
+
+    user.password = req.body.password;
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpire = undefined;
+
+    await user.save();
+    sendTokenResponse(user, 200, res);
+});
+
+exports.updateUserDetails = asyncHandler(async (req, res, next) => { 
+    const fieldsToUpdate = {
+        name: req.body.name,
+        email: req.body.email
+    }
+    const user = await User.findByIdAndUpdate(req.user.id, fieldsToUpdate, {
+        new: true,
+        runValidators: true
+    });
+    res.status(200).json({ success: true, data: user });
+});
+
+exports.updatePassword = asyncHandler(async (req, res, next) => { 
+    const user = await User.findById(req.user.id).select('+password');
+
+    if (!(await user.matchPassword(req.body.currentPassword))){
+        return next(new errorResponse('Password is incorrect'), 401);
+    }
+
+    user.password = req.body.newPassword;
+    await user.save();
+    sendTokenResponse(user, 200, res);
+});

@@ -16,6 +16,6 @@ router.use('/:bootcampId/reviews', reviewRouter);
 
 const { protect, authorize } = require('../middleware/auth');
 router.route('/:id/photo').put(bootcampFileUpload);
-router.route('/').get(protect, authorize('publisher', 'admin'), getBootcamps).post(protect, createBootcamp);
+router.route('/').get(protect, authorize('publisher', 'admin'), getBootcamps).post(protect, authorize('publisher', 'admin'), createBootcamp);
 router.route('/:id').get(getBootcamp).put(protect, authorize('publisher', 'admin'), updateBootcamp).delete(deleteBootcamp);
 module.exports = router;
