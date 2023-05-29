@@ -7,6 +7,11 @@ const morgan = require('morgan');
 const errorHandler = require('./middleware/error');
 const cookieParser = require('cookie-parser');
 const fileUpload = require('express-fileupload');
+const mongoSanitize = require('express-mongo-sanitize');
+const hpp = require('hpp');
+const erl = require('express-rate-limit');
+const cors = require('cors');
+
 // Route files
 const bootcamps = require('./routes/bootcamps');
 const courses = require('./routes/courses');
@@ -18,12 +23,18 @@ const auth = require('./routes/auth');
 dotenv.config({ path: './config/config.env'});
 connectDB();
 const app = express();
-
+app.use(mongoSanitize());
 app.use(logger);
 app.use(express.json());
+app.use(cors());
 // File upload
 app.use(fileUpload());
-
+const limit = erl({
+    windowMs: 10 * 60  * 1000, // 10 minutes
+    max: 100
+})
+app.use(limit)
+app.use(hpp());
 // Mount routers
 app.use('/api/v1/bootcamps', bootcamps);
 app.use('/api/v1/reviews', reviews);

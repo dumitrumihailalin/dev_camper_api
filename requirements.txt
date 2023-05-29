@@ -2,3 +2,6 @@ npm i bcryptjs
 npm i jsonwebtoken
 npm i cookie-parser
 npm i --save express-fileupload
+npm i express-mongo-sanitize
+npm install --save express-rate-limit
+npm install hpp --save
